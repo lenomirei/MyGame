@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://dxwr44d6dw8bu"]
+
+[ext_resource type="Script" uid="uid://bvtmh4pqqqkas" path="res://game_manager.gd" id="1_70yv6"]
+
+[node name="GameManager" type="Node" unique_id=1274038162]
+script = ExtResource("1_70yv6")
+
+[node name="GameLevel" type="Node" parent="." unique_id=1389925416]
+
+[node name="Pause" type="CanvasLayer" parent="." unique_id=578545031]

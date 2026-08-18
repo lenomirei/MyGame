@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://fgc32h3yhtqn"]
+
+[ext_resource type="PackedScene" uid="uid://bg7idkmhpvf85" path="res://country.tscn" id="1_u52ul"]
+
+[node name="Level" type="Node2D" unique_id=1266508470]
+
+[node name="EnemyCountry" parent="." unique_id=2022963055 instance=ExtResource("1_u52ul")]
+position = Vector2(913, 81)
+
+[node name="PlayerCountry" parent="." unique_id=576319512 instance=ExtResource("1_u52ul")]
+position = Vector2(360, 429)
+color = Color(0.14520842, 0.51802653, 0.99999994, 1)
+
+[node name="Country" parent="." unique_id=653837030 instance=ExtResource("1_u52ul")]
+position = Vector2(299, 128)
+color = Color(0.6788892, 0.50372463, 0, 1)

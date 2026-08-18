@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://bg7idkmhpvf85"]
+
+[ext_resource type="Script" uid="uid://d1761esfkfhsh" path="res://country.gd" id="1_1yy88"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qaopu"]
+radius = 20.0
+
+[node name="Country" type="Area2D" unique_id=2022963055]
+script = ExtResource("1_1yy88")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=201935307]
+shape = SubResource("CircleShape2D_qaopu")
+
+[node name="Timer" type="Timer" parent="." unique_id=32521122]
+
+[node name="Soldiers" type="Node2D" parent="." unique_id=98623314]
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="timeout" from="Timer" to="." method="_on_spawn_timer_timeout"]
