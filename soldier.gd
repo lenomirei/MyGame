@@ -17,3 +17,6 @@ func _physics_process(delta: float) -> void:
 
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, soldier_color)
+	
+func fly_to_another_country(target: Country) -> void:
+	pass

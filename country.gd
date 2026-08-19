@@ -13,10 +13,31 @@ var spawn_cd: float = 1.0
 var soldier_class: PackedScene = preload("res://soldier.tscn") as PackedScene
 var mouse_enter: bool = false
 var connecting: bool = false
+var hovered_country: Country
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	reset()
+
+func get_country_under_mouse() -> Country:
+	var space: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	var params := PhysicsPointQueryParameters2D.new()
+	params.position = get_global_mouse_position()
+	params.collide_with_areas = true
+	params.collide_with_bodies = false
+	for result in space.intersect_point(params, 8):
+		var collider = result.collider
+		if collider is Country and collider != self:
+			return collider
+	return null
+
+func _move_soldiers_to_target(target: Country) -> void:
+	if target != null:
+		for soldier in $"Soldiers".get_children():
+			soldier = soldier as Soldier
+			soldier.fly_to_another_country(target)
+			pass
+	pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -55,6 +76,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			connecting = false;
 			connecting_exit.emit()
 			# redraw to disable the line
+			
+			var target := get_country_under_mouse()
+			_move_soldiers_to_target(target)
 			queue_redraw()
 		if mouse_event.is_pressed() and mouse_enter:
 			connecting = true
