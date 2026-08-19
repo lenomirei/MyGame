@@ -15,4 +15,12 @@ shape = SubResource("CircleShape2D_qaopu")
 
 [node name="Soldiers" type="Node2D" parent="." unique_id=98623314]
 
+[node name="Label" type="Label" parent="." unique_id=332238619]
+offset_left = -20.0
+offset_top = -49.0
+offset_right = 20.0
+offset_bottom = -26.0
+text = "0"
+horizontal_alignment = 1
+
 [connection signal="timeout" from="Timer" to="." method="_on_spawn_timer_timeout"]
