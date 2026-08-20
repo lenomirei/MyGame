@@ -11,9 +11,10 @@ max_soldier_count = 20
 [node name="PlayerCountry" parent="." unique_id=576319512 instance=ExtResource("1_u52ul")]
 position = Vector2(360, 429)
 color = Color(0.14520842, 0.51802653, 0.99999994, 1)
-under_player_countrol = true
+state = 1
 
 [node name="Country" parent="." unique_id=653837030 instance=ExtResource("1_u52ul")]
 position = Vector2(299, 128)
 color = Color(0.6788892, 0.50372463, 0, 1)
+state = 2
 max_soldier_count = 30
