@@ -3,12 +3,12 @@ extends CharacterBody2D
 class_name Soldier
 
 @export var radius: float = 2.0
-var soldier_color: Color = Color.RED
+var master_country: Country = null
 var moving: bool = false
 var target_point: Vector2
 
-func initialize(c: Color) -> void:
-	soldier_color = c
+func initialize(c: Country) -> void:
+	master_country = c
 	queue_redraw()
 
 func _ready() -> void:
@@ -23,4 +23,4 @@ func _process(delta: float) -> void:
 	# 	pass
 
 func _draw() -> void:
-	draw_circle(Vector2.ZERO, radius, soldier_color)
+	draw_circle(Vector2.ZERO, radius, master_country.color)

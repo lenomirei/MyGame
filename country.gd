@@ -4,6 +4,7 @@ class_name Country
 
 signal connecting_enter()
 signal connecting_exit()
+signal captured_by(old_state: Country.State, new_state: Country.State)
 
 enum State {
 	NEUTRAL,
@@ -16,13 +17,14 @@ enum State {
 @export var state: State = State.NEUTRAL
 @export var max_soldier_count: int = 50
 @export var spawn_cd: float = 1.0
-var soldier_class: PackedScene = preload("res://soldier.tscn") as PackedScene
+var soldier_class: PackedScene
 var mouse_enter: bool = false
 var connecting: bool = false
 var hovered_country: Country
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	soldier_class = preload("res://soldier.tscn") as PackedScene
 	reset()
 
 func get_country_under_mouse() -> Country:
@@ -91,7 +93,7 @@ func start_spawn() -> void:
 func _on_spawn_timer_timeout() -> void:
 	if $"Soldiers".get_child_count() < max_soldier_count:
 		var soldier: Soldier = soldier_class.instantiate() as Soldier
-		soldier.initialize(color)
+		soldier.initialize(self)
 		$"Soldiers".add_child(soldier)
 		soldier.position = Vector2(30, 30)
 		_update_label()
@@ -112,6 +114,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			connecting_enter.emit()
 			
 func captured(e_c: Country) -> void:
+	captured_by.emit(state, e_c.state)
 	color = e_c.color
 	state = e_c.state
 	reset()
