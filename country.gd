@@ -42,30 +42,35 @@ func get_country_under_mouse() -> Country:
 func _is_same_country(country: Country) -> bool:
 	return country.state == self.state
 
-func _handle_attack_soldier(soldier: Soldier, country: Country) -> void:
-	if _is_same_country(country):
-		$"Soldiers".add_child(soldier)
+func _handle_attack_soldier(soldier: Soldier, from_country: Country) -> void:
+	if _is_same_country(from_country):
+		soldier.reparent(self.get_node(^"Soldiers"), true)
 	else:
 		var soldiers_count: int = $"Soldiers".get_child_count()
 		if soldiers_count > 0:
+			# delete soldier
 			var top_soldier: Soldier = $Soldiers.get_child(0)
 			$"Soldiers".remove_child(top_soldier)
 			top_soldier.queue_free()
 			soldier.queue_free()
 		else:
-			$Soldiers.add_child(soldier)
-			captured(country)
+			soldier.reparent(self.get_node(^"Soldiers"), true)
+			captured(from_country)
 	_update_label()
 
 func _move_soldiers_to_target(target: Country) -> void:
 	if target != null:
-		for soldier in $"Soldiers".get_children():
-			soldier = soldier as Soldier
-			$"Soldiers".remove_child(soldier)
-			_update_label()
-			target._handle_attack_soldier(soldier, self)
-			pass
+		_fly_soldiers(target)
 	pass
+	
+func _fly_soldiers(target: Country):
+	for soldier in $"Soldiers".get_children():
+			soldier = soldier as Soldier
+			soldier.reparent(get_parent(), true)
+			soldier._fly_to(target)
+			_update_label()
+			#target._handle_attack_soldier(soldier, self)
+			pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
