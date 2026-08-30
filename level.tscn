@@ -1,22 +1,36 @@
 [gd_scene format=3 uid="uid://fgc32h3yhtqn"]
 
-[ext_resource type="PackedScene" uid="uid://bg7idkmhpvf85" path="res://country.tscn" id="1_u52ul"]
+[ext_resource type="PackedScene" uid="uid://bg7idkmhpvf85" path="res://planet.tscn" id="1_u52ul"]
 [ext_resource type="Script" uid="uid://bfgciatml2b00" path="res://level.gd" id="1_vonw3"]
+[ext_resource type="Script" uid="uid://c1n1bdoedmirl" path="res://faction.gd" id="3_oi3di"]
 
 [node name="Level" type="Node2D" unique_id=1266508470]
 script = ExtResource("1_vonw3")
 
-[node name="NeutralCountry" parent="." unique_id=2022963055 instance=ExtResource("1_u52ul")]
+[node name="NeutralCountry" parent="." unique_id=2022963055 node_paths=PackedStringArray("master_faction") instance=ExtResource("1_u52ul")]
 position = Vector2(913, 81)
-max_soldier_count = 20
+master_faction = NodePath("../Neutral")
 
-[node name="PlayerCountry" parent="." unique_id=576319512 instance=ExtResource("1_u52ul")]
+[node name="PlayerCountry" parent="." unique_id=576319512 node_paths=PackedStringArray("master_faction") instance=ExtResource("1_u52ul")]
 position = Vector2(360, 429)
-color = Color(0.14520842, 0.51802653, 0.99999994, 1)
+master_faction = NodePath("../Player")
+
+[node name="EnemyCountry" parent="." unique_id=653837030 node_paths=PackedStringArray("master_faction") instance=ExtResource("1_u52ul")]
+position = Vector2(299, 128)
+master_faction = NodePath("../Enemy1")
+
+[node name="Player" type="Node" parent="." unique_id=200337851]
+script = ExtResource("3_oi3di")
+color = Color(0, 0, 1, 1)
+max_soldier_count = 50
 state = 1
 
-[node name="EnemyCountry" parent="." unique_id=653837030 instance=ExtResource("1_u52ul")]
-position = Vector2(299, 128)
-color = Color(0.6788892, 0.50372463, 0, 1)
+[node name="Enemy1" type="Node" parent="." unique_id=676123288]
+script = ExtResource("3_oi3di")
+color = Color(1, 0, 0, 1)
+max_soldier_count = 50
+id = 1
 state = 2
-max_soldier_count = 30
+
+[node name="Neutral" type="Node" parent="." unique_id=956169909]
+script = ExtResource("3_oi3di")
