@@ -2,9 +2,13 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass
-
-func _generate_level() -> bool:
+	var database = TextDatabase.new()
+	database.load_from_path("res://level_configurations/text.cfg")
+	var data = database.get_dictionary()
+	for item in data:
+		print(item)
+	
+func _generate_level(config_path: String) -> bool:
 	return true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

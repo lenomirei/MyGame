@@ -1,0 +1,45 @@
+{
+  "factions": [
+    {
+      "name": "Player",
+      "color": "#FF0000",
+      "id": 1,
+      "state": 1
+    },
+    {
+      "name": "Enemy",
+      "color": "#00FF00",
+      "id": 2,
+      "state": 2
+    }
+  ],
+  "planets": [
+    {
+      "current_soldiers": 0,
+      "max_soldiers": 10,
+      "master_state": 0,
+      "position": {
+        "x": 100,
+        "y": 200
+      }
+    },
+    {
+      "current_soldiers": 0,
+      "max_soldiers": 10,
+      "master_state": 0,
+      "position": {
+        "x": 300,
+        "y": 200
+      }
+    },
+    {
+      "current_soldiers": 0,
+      "max_soldiers": 10,
+      "master_state": 0,
+      "position": {
+        "x": 400,
+        "y": 200
+      }
+    }
+  ]
+}
