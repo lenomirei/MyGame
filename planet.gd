@@ -13,6 +13,7 @@ signal captured_by(old_faction: Faction, new_faction: Faction)
 var soldier_class: PackedScene
 var mouse_enter: bool = false
 var connecting: bool = false
+var id: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -92,6 +93,7 @@ func _on_spawn_timer_timeout() -> void:
 		soldier.initialize(self, master_faction)
 		$"Soldiers".add_child(soldier)
 		soldier.position = Vector2(30, 30)
+		master_faction._soldier_change(1)
 		_update_label()
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -111,6 +113,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			
 func captured(faction: Faction) -> void:
 	captured_by.emit(faction)
+	master_faction.max_soldier_count -= self.soldier_limit
+	faction.max_soldier_count += self.soldier_limit
 	master_faction = faction
 	reset()
 	queue_redraw()
