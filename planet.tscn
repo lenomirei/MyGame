@@ -7,15 +7,11 @@ radius = 20.0
 
 [node name="Planet" type="Area2D" unique_id=2022963055]
 script = ExtResource("1_1yy88")
-radius = null
-state = null
-max_soldier_count = null
-spawn_cd = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=201935307]
 shape = SubResource("CircleShape2D_qaopu")
 
-[node name="Timer" type="Timer" parent="." unique_id=32521122]
+[node name="SpwanTimer" type="Timer" parent="." unique_id=32521122]
 
 [node name="Soldiers" type="Node2D" parent="." unique_id=98623314]
 
@@ -27,4 +23,30 @@ offset_bottom = -26.0
 text = "0"
 horizontal_alignment = 1
 
-[connection signal="timeout" from="Timer" to="." method="_on_spawn_timer_timeout"]
+[node name="ProgressBar" type="ProgressBar" parent="." unique_id=1370383137]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -12.5
+offset_top = 45.0
+offset_right = 12.5
+offset_bottom = 72.0
+grow_horizontal = 2
+step = 1.0
+
+[node name="SoldiersBox" type="HBoxContainer" parent="." unique_id=1134177096]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -23.0
+offset_top = 26.0
+offset_right = 23.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="CaptureTimer" type="Timer" parent="." unique_id=1051005178]
+
+[connection signal="timeout" from="SpwanTimer" to="." method="_on_spawn_timer_timeout"]
