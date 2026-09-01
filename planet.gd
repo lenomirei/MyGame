@@ -43,10 +43,10 @@ func _is_attack(soldier: Soldier) -> bool:
 
 func _handle_attack_soldier(soldier: Soldier) -> void:
 	if _is_attack(soldier):
-		var soldiers_count: int = $"Soldiers".get_child_count()
-		if soldiers_count > 0:
+		var guard_soldiers_count: int = soldiers_map[master_faction].size()
+		if guard_soldiers_count > 0:
 			# delete soldier
-			var top_soldier: Soldier = $Soldiers.get_child(0)
+			var top_soldier: Soldier = soldiers_map[master_faction].pop_back()
 			$"Soldiers".remove_child(top_soldier)
 			top_soldier.queue_free()
 			soldier.queue_free()
@@ -54,6 +54,7 @@ func _handle_attack_soldier(soldier: Soldier) -> void:
 			soldier.reparent(self.get_node(^"Soldiers"), true)
 			_start_capture(soldier.master_faction)
 	else:
+		# not attack reparent the soldier to this planet
 		soldier.reparent(self.get_node(^"Soldiers"), true)
 		
 	_update_soldiers_information()
