@@ -43,7 +43,7 @@ func _is_attack(soldier: Soldier) -> bool:
 
 func _handle_attack_soldier(soldier: Soldier) -> void:
 	if _is_attack(soldier):
-		var guard_soldiers_count: int = soldiers_map[master_faction].size()
+		var guard_soldiers_count: int = 0 if master_faction.state == Faction.State.NEUTRAL else soldiers_map[master_faction].size()
 		if guard_soldiers_count > 0:
 			# delete soldier
 			var top_soldier: Soldier = soldiers_map[master_faction].pop_back()
