@@ -32,6 +32,10 @@ var capture_progress: CaptureProgress
 func _ready() -> void:
 	capture_progress = $"CaptureProgress"
 	soldier_class = load("res://soldier.tscn") as PackedScene
+	var label: Label = $"Label"
+	label.position.y = -radius - label.size.y - 10
+	var soldiers_box: HBoxContainer = $"SoldiersBox"
+	soldiers_box.position.y = radius + 10
 	reset()
 
 func get_planet_under_mouse() -> Planet:
