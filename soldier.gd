@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 		# if moving is true the soldier's parent node is level, so the position is relative postition of the level root node
 		position = position.move_toward(target_planet.position, 1.0)
 		if position == target_planet.position:
-			target_planet._handle_attack_soldier(self)
+			target_planet._receive_soldiers(self)
 			moving = false
 			target_planet = null
 	else:

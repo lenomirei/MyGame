@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="little-rts"
-run/main_scene="uid://fgc32h3yhtqn"
+run/main_scene="uid://dxwr44d6dw8bu"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
