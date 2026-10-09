@@ -1,0 +1,52 @@
+[gd_resource type="Resource" script_class="LevelConfiguration" format=3 uid="uid://cuuj4411rodqg"]
+
+[ext_resource type="Script" uid="uid://cw3bmhdx12l4k" path="res://level_configurations/faction_info.gd" id="1_cb88o"]
+[ext_resource type="Script" uid="uid://cc2s11ev31kvd" path="res://level_configurations/level_configuration.gd" id="1_gi8g6"]
+[ext_resource type="Script" uid="uid://crmdjoc0fwvr8" path="res://level_configurations/planet_info.gd" id="1_kbt5x"]
+
+[sub_resource type="Resource" id="Resource_mwttj"]
+script = ExtResource("1_cb88o")
+name = "Player"
+color = Color(0, 0, 1, 1)
+state = 1
+metadata/_custom_type_script = "uid://cw3bmhdx12l4k"
+
+[sub_resource type="Resource" id="Resource_cb88o"]
+script = ExtResource("1_cb88o")
+name = "Enemy"
+color = Color(1, 0, 0, 1)
+id = 1
+state = 2
+metadata/_custom_type_script = "uid://cw3bmhdx12l4k"
+
+[sub_resource type="Resource" id="Resource_allwr"]
+script = ExtResource("1_kbt5x")
+max_soldiers = 30
+radius = 30.0
+master_state = 1
+position = Vector2(100, 200)
+metadata/_custom_type_script = "uid://crmdjoc0fwvr8"
+
+[sub_resource type="Resource" id="Resource_4vks5"]
+script = ExtResource("1_kbt5x")
+id = 1
+max_soldiers = 50
+radius = 50.0
+position = Vector2(200, 400)
+metadata/_custom_type_script = "uid://crmdjoc0fwvr8"
+
+[sub_resource type="Resource" id="Resource_xlfnc"]
+script = ExtResource("1_kbt5x")
+id = 2
+max_soldiers = 30
+radius = 30.0
+master_state = 2
+master_id = 1
+position = Vector2(300, 100)
+metadata/_custom_type_script = "uid://crmdjoc0fwvr8"
+
+[resource]
+script = ExtResource("1_gi8g6")
+factions = Array[ExtResource("1_cb88o")]([SubResource("Resource_mwttj"), SubResource("Resource_cb88o")])
+planets = Array[ExtResource("1_kbt5x")]([SubResource("Resource_allwr"), SubResource("Resource_4vks5"), SubResource("Resource_xlfnc")])
+metadata/_custom_type_script = "uid://cc2s11ev31kvd"
