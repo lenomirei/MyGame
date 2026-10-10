@@ -19,7 +19,7 @@ class PlanetFactionSoldierInfo:
 	get:
 		return soldier_limit
 @export var spawn_cd: float = 1.0
-@export var battle_speed: float = 1.0  # 每秒损耗系数（越大打得越快）
+@export var battle_speed: float = 10.0  # 每秒损耗系数（越大打得越快）
 
 var soldier_class: PackedScene
 var mouse_enter: bool = false
@@ -27,6 +27,7 @@ var connecting: bool = false
 var id: int
 var soldiers_map: Dictionary[Faction, PlanetFactionSoldierInfo]
 var capture_progress: CaptureProgress
+var battle_timer: Timer
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -36,6 +37,10 @@ func _ready() -> void:
 	label.position.y = -radius - label.size.y - 10
 	var soldiers_box: HBoxContainer = $"SoldiersBox"
 	soldiers_box.position.y = radius + 10
+	var capture_progress: ProgressBar = $"CaptureProgress"
+	capture_progress.position.y = radius + 40
+	battle_timer = Timer.new()
+	add_child(battle_timer)
 	reset()
 
 func get_planet_under_mouse() -> Planet:
@@ -63,6 +68,8 @@ func _receive_soldiers(soldier: Soldier) -> void:
 	# add soldier to map
 	soldiers_map[soldier.master_faction].soldiers.push_back(soldier)
 	# reparent soldier
+	soldier.orbit_radius_x = self.radius + 30
+	soldier.orbit_radius_y = self.radius + 30
 	soldier.reparent(self.get_node(^"Soldiers"), true)
 	_update_soldiers_information()
 
@@ -87,32 +94,40 @@ func _process(delta: float) -> void:
 	if connecting and master_faction.state == Faction.State.PLAYER:
 		queue_redraw()
 
-	_battle(delta)
+	# _battle(delta)
 	if soldiers_map.size() == 1 and soldiers_map.keys()[0] != master_faction:
+		if not battle_timer.is_stopped():
+			battle_timer.stop()
+		battle_timer.stop()
 		var spawn_timer: Timer = $"SpwanTimer"
 		spawn_timer.stop()
 		capture_progress.visible = true
 		capture_progress._increase(capture_progress.step * soldiers_map.values()[0].soldiers.size(), soldiers_map.keys()[0])
-		
-	if soldiers_map.size() > 1:
-		var timer = Timer.new()
-		timer.wait_time = 1.0
-		timer.timeout.connect(_on_battle_tick)
-		add_child(timer)
-		timer.start()
+	elif soldiers_map.size() > 1:
+		battle_timer.wait_time = 1.0
+		battle_timer.timeout.connect(_on_battle_tick)
+		if battle_timer.is_stopped():
+			battle_timer.start()
 
 func _on_battle_tick():
 	if soldiers_map.size() <= 1:
 		return
 	
+	var to_erase: Array[Faction] = []
 	for faction in soldiers_map:
 		var loss_faction:int = int(0.1 * soldiers_map[faction].soldiers.size())
 		loss_faction = max(1, loss_faction)
-		# free the solders byte the loss_faction count
-		var remove_soldier: Soldier = soldiers_map[faction].soldiers.pop_back()
-		self.get_node(^"Soldiers").remove_child(remove_soldier)
-		remove_soldier.queue_free()
+		# free the solders by the loss_faction count
+		for i: int in loss_faction:
+			if soldiers_map[faction].soldiers.is_empty():
+				to_erase.append(faction)
+				continue
+			var remove_soldier: Soldier = soldiers_map[faction].soldiers.pop_back()
+			self.get_node(^"Soldiers").remove_child(remove_soldier)
+			remove_soldier.queue_free()
 	
+	for faction: Faction in to_erase:
+		_remove_loser_faction(faction)
 	# update soldiers information
 	_update_soldiers_information()
 
@@ -121,41 +136,41 @@ func _on_battle_tick():
 	# B = max(0, B - max(1, loss_B))
 	
 
-func _battle(delta: float) -> void:
-	if soldiers_map.size() < 2:
-		return  # 场上只有一个势力，不战斗
+# func _battle(delta: float) -> void:
+# 	if soldiers_map.size() < 2:
+# 		return  # 场上只有一个势力，不战斗
 
-	# 1) 先统计各势力数量（不能在循环里改字典，先记下来）
-	var counts: Dictionary = {}
-	var total := 0
-	for faction in soldiers_map:
-		var c: int = soldiers_map[faction].soldiers.size()
-		counts[faction] = c
-		total += c
+# 	# 1) 先统计各势力数量（不能在循环里改字典，先记下来）
+# 	var counts: Dictionary = {}
+# 	var total := 0
+# 	for faction in soldiers_map:
+# 		var c: int = soldiers_map[faction].soldiers.size()
+# 		counts[faction] = c
+# 		total += c
 
-	# 2) 逐个势力结算损失
-	var to_erase: Array[Faction] = []
-	for faction in soldiers_map:
-		var info: PlanetFactionSoldierInfo = soldiers_map[faction]
-		var c: int = counts[faction]
-		if c <= 0:
-			to_erase.append(faction)
-			continue
-		var enemy_total: int = total - c
-		# 人越少掉得越快
-		var loss_per_sec: float = battle_speed * enemy_total / float(c)
-		var loss_count: int = int(loss_per_sec * delta)  # 这一帧掉几个
-		for i in loss_count:
-			var dead: Soldier = info.soldiers.pop_back()
-			$"Soldiers".remove_child(dead)
-			dead.queue_free()
+# 	# 2) 逐个势力结算损失
+# 	var to_erase: Array[Faction] = []
+# 	for faction in soldiers_map:
+# 		var info: PlanetFactionSoldierInfo = soldiers_map[faction]
+# 		var c: int = counts[faction]
+# 		if c <= 0:
+# 			to_erase.append(faction)
+# 			continue
+# 		var enemy_total: int = total - c
+# 		# 人越少掉得越快
+# 		var loss_per_sec: float = battle_speed * enemy_total / float(c)
+# 		var loss_count: int = int(loss_per_sec * delta)  # 这一帧掉几个
+# 		for i in loss_count:
+# 			var dead: Soldier = info.soldiers.pop_back()
+# 			$"Soldiers".remove_child(dead)
+# 			dead.queue_free()
 
-	# 3) 打光的势力从 map 里清掉（否则 size() 一直≥2 会永远战斗）
-	for faction in to_erase:
-		_remove_loser_faction(faction)
+# 	# 3) 打光的势力从 map 里清掉（否则 size() 一直≥2 会永远战斗）
+# 	for faction in to_erase:
+# 		_remove_loser_faction(faction)
 
-	# 4) 刷新数量显示（顺带，数量只剩 1 个势力时会走你现有的 capture 逻辑）
-	_update_soldiers_information()
+# 	# 4) 刷新数量显示（顺带，数量只剩 1 个势力时会走你现有的 capture 逻辑）
+# 	_update_soldiers_information()
 
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, master_faction.color)
@@ -182,6 +197,8 @@ func _on_spawn_timer_timeout() -> void:
 		soldiers_map[master_faction].soldiers.push_back(soldier)
 		$"Soldiers".add_child(soldier)
 		soldier.position = Vector2(30, 30)
+		soldier.orbit_radius_x = self.radius + 30
+		soldier.orbit_radius_y = self.radius + 30
 		master_faction._soldier_change(1)
 		_update_soldiers_information()
 
