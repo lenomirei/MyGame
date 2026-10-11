@@ -19,7 +19,7 @@ class PlanetFactionSoldierInfo:
 	get:
 		return soldier_limit
 @export var spawn_cd: float = 1.0
-@export var battle_speed: float = 10.0  # 每秒损耗系数（越大打得越快）
+@export var battle_speed: float = 1.0  # 每秒损耗系数（越大打得越快）
 
 var soldier_class: PackedScene
 var mouse_enter: bool = false
@@ -113,21 +113,35 @@ func _on_battle_tick():
 	if soldiers_map.size() <= 1:
 		return
 	
+	# 1) 先统计各势力数量（不能在循环里改字典，先记下来）
+	var counts: Dictionary = {}
+	var total := 0
+	for faction in soldiers_map:
+		var c: int = soldiers_map[faction].soldiers.size()
+		counts[faction] = c
+		total += c
+
+	# 2) 逐个势力结算损失
 	var to_erase: Array[Faction] = []
 	for faction in soldiers_map:
-		var loss_faction:int = int(0.1 * soldiers_map[faction].soldiers.size())
-		loss_faction = max(1, loss_faction)
-		# free the solders by the loss_faction count
-		for i: int in loss_faction:
-			if soldiers_map[faction].soldiers.is_empty():
-				to_erase.append(faction)
-				continue
-			var remove_soldier: Soldier = soldiers_map[faction].soldiers.pop_back()
-			self.get_node(^"Soldiers").remove_child(remove_soldier)
-			remove_soldier.queue_free()
+		var info: PlanetFactionSoldierInfo = soldiers_map[faction]
+		var c: int = info.soldiers.size()
+		if c <= 0:
+			to_erase.append(faction)
+			continue
+		var enemy_total: int = total - c
+		# 人越少掉得越快
+		var loss_per_sec: float = battle_speed * enemy_total / float(c)
+		var loss_count: int = int(loss_per_sec)  # 这一秒掉几个
+		var loop_times = min(loss_count, c)
+		for i in loop_times:
+			var dead: Soldier = info.soldiers.pop_back()
+			$"Soldiers".remove_child(dead)
+			dead.queue_free()
 	
 	for faction: Faction in to_erase:
 		_remove_loser_faction(faction)
+
 	# update soldiers information
 	_update_soldiers_information()
 
