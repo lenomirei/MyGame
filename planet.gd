@@ -11,7 +11,7 @@ class PlanetFactionSoldierInfo:
 	var soldier_count_label: Label = Label.new() # soldier count label for this faction on this planet
 
 @export var master_faction: Faction = null
-@export var radius: float = 20.0
+@export var radius: float
 @export var soldier_limit: int = 50:
 	set(value):
 		soldier_limit = value
@@ -42,6 +42,9 @@ func _ready() -> void:
 	battle_timer = Timer.new()
 	battle_timer.timeout.connect(_on_battle_tick)
 	add_child(battle_timer)
+	
+	var shape:CircleShape2D = $"CollisionShape2D".shape
+	shape.radius = radius + 10 # buffer
 	reset()
 
 func get_planet_under_mouse() -> Planet:
@@ -105,7 +108,7 @@ func _process(delta: float) -> void:
 		capture_progress.visible = true
 		capture_progress._increase(capture_progress.step * soldiers_map.values()[0].soldiers.size(), soldiers_map.keys()[0])
 	elif soldiers_map.size() > 1:
-		battle_timer.wait_time = 1.0
+		battle_timer.wait_time = 0.2
 		if battle_timer.is_stopped():
 			battle_timer.start()
 
@@ -216,19 +219,21 @@ func _on_spawn_timer_timeout() -> void:
 		master_faction._soldier_change(1)
 		_update_soldiers_information()
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
-		if mouse_event.is_released() and connecting:
-			connecting = false;
-			connecting_exit.emit()
+		if mouse_event.is_released() and GlobalData.drag_info.from != null:
+			GlobalData.drag_info.from.connecting = false;
+			GlobalData.drag_info.from.connecting_exit.emit()
+			GlobalData.drag_info.to = self
 			# redraw to disable the line
 			
-			var target := get_planet_under_mouse()
-			_move_soldiers_to_target(target)
-			queue_redraw()
+			if GlobalData.drag_info.from != self:
+				GlobalData.drag_info.from._move_soldiers_to_target(GlobalData.drag_info.to)
+			GlobalData.drag_info.clear()
 		if mouse_event.is_pressed() and mouse_enter:
 			connecting = true
+			GlobalData.drag_info.from = self
 			connecting_enter.emit()
 			
 func _start_capture(faction: Faction) -> void:
@@ -272,4 +277,3 @@ func _on_capture_progress_progress_max(faction: Faction) -> void:
 func _remove_loser_faction(loser: Faction) -> void:
 	$"SoldiersBox".remove_child(soldiers_map[loser].soldier_count_label)
 	soldiers_map.erase(loser)
-	

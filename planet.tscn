@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://dbm3lny1m45xl" path="res://capture_progress.gd" id="2_mtr83"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qaopu"]
-radius = 20.0
+resource_local_to_scene = true
 
 [node name="Planet" type="Area2D" unique_id=2022963055]
 script = ExtResource("1_1yy88")

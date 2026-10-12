@@ -71,3 +71,11 @@ func _player_win():
 func _player_lose():
 	# todo: pause the game and emit play lose signal to game manager
 	pass
+	
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_event.is_released() and GlobalData.drag_info.from != null:
+			GlobalData.drag_info.from.connecting = false;
+			GlobalData.drag_info.from.connecting_exit.emit()
+			GlobalData.drag_info.clear()
