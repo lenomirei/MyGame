@@ -40,6 +40,7 @@ func _ready() -> void:
 	var capture_progress: ProgressBar = $"CaptureProgress"
 	capture_progress.position.y = radius + 40
 	battle_timer = Timer.new()
+	battle_timer.timeout.connect(_on_battle_tick)
 	add_child(battle_timer)
 	reset()
 
@@ -105,7 +106,6 @@ func _process(delta: float) -> void:
 		capture_progress._increase(capture_progress.step * soldiers_map.values()[0].soldiers.size(), soldiers_map.keys()[0])
 	elif soldiers_map.size() > 1:
 		battle_timer.wait_time = 1.0
-		battle_timer.timeout.connect(_on_battle_tick)
 		if battle_timer.is_stopped():
 			battle_timer.start()
 
@@ -132,7 +132,7 @@ func _on_battle_tick():
 		var enemy_total: int = total - c
 		# 人越少掉得越快
 		var loss_per_sec: float = battle_speed * enemy_total / float(c)
-		var loss_count: int = int(loss_per_sec)  # 这一秒掉几个
+		var loss_count: int = max(loss_per_sec, 1)  # 这一秒掉几个，最少掉一个
 		var loop_times = min(loss_count, c)
 		for i in loop_times:
 			var dead: Soldier = info.soldiers.pop_back()
