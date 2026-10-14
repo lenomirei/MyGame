@@ -40,6 +40,7 @@ func _ready() -> void:
 	var capture_progress: ProgressBar = $"CaptureProgress"
 	capture_progress.position.y = radius + 40
 	battle_timer = Timer.new()
+	battle_timer.wait_time = 1
 	battle_timer.timeout.connect(_on_battle_tick)
 	add_child(battle_timer)
 	
@@ -108,7 +109,6 @@ func _process(delta: float) -> void:
 		capture_progress.visible = true
 		capture_progress._increase(capture_progress.step * soldiers_map.values()[0].soldiers.size(), soldiers_map.keys()[0])
 	elif soldiers_map.size() > 1:
-		battle_timer.wait_time = 0.2
 		if battle_timer.is_stopped():
 			battle_timer.start()
 
@@ -222,19 +222,19 @@ func _on_spawn_timer_timeout() -> void:
 func _input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
-		if mouse_event.is_released() and GlobalData.drag_info.from != null:
-			GlobalData.drag_info.from.connecting = false;
-			GlobalData.drag_info.from.connecting_exit.emit()
-			GlobalData.drag_info.to = self
-			# redraw to disable the line
-			
-			if GlobalData.drag_info.from != self:
-				GlobalData.drag_info.from._move_soldiers_to_target(GlobalData.drag_info.to)
-			GlobalData.drag_info.clear()
-		if mouse_event.is_pressed() and mouse_enter:
-			connecting = true
-			GlobalData.drag_info.from = self
-			connecting_enter.emit()
+		if mouse_event.is_pressed():
+			if GlobalData.drag_info.from == null:
+				connecting = true
+				GlobalData.drag_info.from = self
+				connecting_enter.emit()
+			else:
+				GlobalData.drag_info.from.connecting = false;
+				GlobalData.drag_info.from.connecting_exit.emit()
+				GlobalData.drag_info.to = self
+				if GlobalData.drag_info.from != self:
+					GlobalData.drag_info.from._move_soldiers_to_target(GlobalData.drag_info.to)
+				GlobalData.drag_info.clear()
+		
 			
 func _start_capture(faction: Faction) -> void:
 	#_captured(faction)
