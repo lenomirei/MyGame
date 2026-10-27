@@ -2,6 +2,11 @@ extends Area2D
 
 class_name Planet
 
+enum PlanetType {
+	PLANET,
+	PORTAL
+}
+
 signal connecting_enter()
 signal connecting_exit()
 signal captured_by(old_faction: Faction, new_faction: Faction)
@@ -20,6 +25,7 @@ class PlanetFactionSoldierInfo:
 		return soldier_limit
 @export var spawn_cd: float = 1.0
 @export var battle_speed: float = 1.0  # 每秒损耗系数（越大打得越快）
+@export var type: PlanetType = PlanetType.PLANET
 
 var soldier_class: PackedScene
 var mouse_enter: bool = false

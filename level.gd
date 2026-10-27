@@ -54,8 +54,12 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 		return false
 	
 	var planet_scene: PackedScene = load("res://planet.tscn")
+	var portal_script: Script = load("res://portal.gd")
 	for planet_data: PlanetInfo in planets_data:
 		var planet_node: Planet = planet_scene.instantiate()
+		planet_node.name = "Planet" + String.num(planet_data.id)
+		if planet_data.planet_type == Planet.PlanetType.PORTAL:
+			planet_node.set_script(portal_script)
 		planet_node.soldier_limit = planet_data.max_soldiers
 		planet_node.radius = planet_data.radius
 		planet_node.id = planet_data.id
