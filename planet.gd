@@ -25,7 +25,8 @@ var soldier_class: PackedScene
 var mouse_enter: bool = false
 var connecting: bool = false
 var id: int
-var soldiers_map: Dictionary[Faction, PlanetFactionSoldierInfo]
+# soldiers on this planet, grouped by faction, PlanetFactionSoldierInfo soldiers may be empty if all soldiers of that faction are dead, but the faction is still present on this planet
+var soldiers_map: Dictionary[Faction, PlanetFactionSoldierInfo] 
 var capture_progress: CaptureProgress
 var battle_timer: Timer
 
@@ -224,9 +225,10 @@ func _input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> void
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 		if mouse_event.is_pressed():
 			if GlobalData.drag_info.from == null:
-				connecting = true
-				GlobalData.drag_info.from = self
-				connecting_enter.emit()
+				if soldiers_map.has(GlobalData.player_faction) && soldiers_map[GlobalData.player_faction].soldiers.size() > 0:
+					connecting = true
+					GlobalData.drag_info.from = self
+					connecting_enter.emit()
 			else:
 				GlobalData.drag_info.from.connecting = false;
 				GlobalData.drag_info.from.connecting_exit.emit()

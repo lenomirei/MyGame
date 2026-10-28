@@ -8,6 +8,10 @@ resource_local_to_scene = true
 
 [node name="Planet" type="Area2D" unique_id=2022963055]
 script = ExtResource("1_1yy88")
+radius = null
+soldier_limit = null
+spawn_cd = null
+battle_speed = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=201935307]
 shape = SubResource("CircleShape2D_qaopu")

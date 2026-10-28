@@ -19,10 +19,16 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 	if null == factions:
 		return false
 	
+	# create factions and add them to the level
 	for faction: FactionInfo in factions:
+		if Faction.is_reserved_name(faction.name):
+			push_error("Faction name \"%s\" is a reserved name for the neutral faction. Please modify %s" % [faction.name, level_configuration.resource_path])
+			return false
 		var faction_node: Faction = Faction.new()
 		faction_node.color = faction.color
 		faction_node.id = faction.id
+		if faction_node.id == 0:
+			GlobalData.player_faction = faction_node
 		faction_node.state = faction.state
 		faction_node.name = faction.name
 		add_child(faction_node)
@@ -32,7 +38,7 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 	var neutral_faction_node: Faction = Faction.new()
 	neutral_faction_node.color = Color.GRAY
 	neutral_faction_node.state = Faction.State.NEUTRAL
-	neutral_faction_node.name = "Neutral"
+	neutral_faction_node.name = Faction.NEUTRAL_NAME
 	add_child(neutral_faction_node)
 	
 	var planets_data: Array[PlanetInfo] = level_configuration.planets
