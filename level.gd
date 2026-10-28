@@ -19,7 +19,7 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 	if null == factions:
 		return false
 	
-	# create factions and add them to the level
+	# create factions and add them to the level, only the enemy factions will be added to the factions_map, the player faction will be stored in GlobalData.player_faction, and the neutral faction will not be added to the factions_map
 	for faction: FactionInfo in factions:
 		if Faction.is_reserved_name(faction.name):
 			push_error("Faction name \"%s\" is a reserved name for the neutral faction. Please modify %s" % [faction.name, level_configuration.resource_path])
@@ -40,6 +40,8 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 	neutral_faction_node.state = Faction.State.NEUTRAL
 	neutral_faction_node.name = Faction.NEUTRAL_NAME
 	add_child(neutral_faction_node)
+
+	# TODO: add a player faction node for the player, and set the player faction to it
 	
 	var planets_data: Array[PlanetInfo] = level_configuration.planets
 	if null == planets_data:
@@ -56,7 +58,10 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 		match master_state:
 			Faction.State.NEUTRAL:
 				planet_node.master_faction = $"Neutral"
+			Faction.State.PLAYER:
+				planet_node.master_faction = GlobalData.player_faction
 			_:
+				# use master_id to find the master faction, and set the master faction's max soldier count
 				var master_faction: Faction = factions_map[planet_data.master_id]
 				planet_node.master_faction = master_faction
 				master_faction.max_soldier_count += planet_node.soldier_limit
