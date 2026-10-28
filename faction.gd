@@ -8,6 +8,11 @@ enum State {
 	ENEMY
 }
 
+const NEUTRAL_NAME := "Neutral"
+
+static func is_reserved_name(value: String) -> bool:
+	return value == NEUTRAL_NAME
+
 @export var color: Color = Color.GRAY
 @export var current_soldier_count = 0
 @export var max_soldier_count = 0
@@ -28,7 +33,7 @@ func _soldier_change(count: int) -> void:
 	current_soldier_count += count
 	
 	if current_soldier_count <= 0:
-		defeated.emit()
+		defeated.emit(self)
 
 func _can_produce_soldier() -> bool:
 	if current_soldier_count < max_soldier_count:
