@@ -9,9 +9,10 @@ enum State {
 }
 
 const NEUTRAL_NAME := "Neutral"
+const PLAYER_NAME := "Player"
 
 static func is_reserved_name(value: String) -> bool:
-	return value == NEUTRAL_NAME
+	return value == NEUTRAL_NAME || value == PLAYER_NAME
 
 @export var color: Color = Color.GRAY
 @export var current_soldier_count = 0

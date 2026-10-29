@@ -27,8 +27,6 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 		var faction_node: Faction = Faction.new()
 		faction_node.color = faction.color
 		faction_node.id = faction.id
-		if faction_node.id == 0:
-			GlobalData.player_faction = faction_node
 		faction_node.state = faction.state
 		faction_node.name = faction.name
 		add_child(faction_node)
@@ -37,11 +35,19 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 	# add a fake faction for neutral faction
 	var neutral_faction_node: Faction = Faction.new()
 	neutral_faction_node.color = Color.GRAY
+	neutral_faction_node.id = 0; # fixed id for special node
 	neutral_faction_node.state = Faction.State.NEUTRAL
 	neutral_faction_node.name = Faction.NEUTRAL_NAME
 	add_child(neutral_faction_node)
 
 	# TODO: add a player faction node for the player, and set the player faction to it
+	var player_faction_node: Faction = Faction.new()
+	player_faction_node.color = Color.BLUE
+	player_faction_node.id = 0; # fixed id for special node
+	player_faction_node.state = Faction.State.PLAYER
+	player_faction_node.name = Faction.PLAYER_NAME
+	GlobalData.player_faction = player_faction_node
+	add_child(player_faction_node)
 	
 	var planets_data: Array[PlanetInfo] = level_configuration.planets
 	if null == planets_data:
@@ -59,12 +65,17 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 			Faction.State.NEUTRAL:
 				planet_node.master_faction = $"Neutral"
 			Faction.State.PLAYER:
-				planet_node.master_faction = GlobalData.player_faction
+				planet_node.master_faction = player_faction_node
+				player_faction_node.max_soldier_count += planet_node.soldier_limit
 			_:
 				# use master_id to find the master faction, and set the master faction's max soldier count
-				var master_faction: Faction = factions_map[planet_data.master_id]
-				planet_node.master_faction = master_faction
-				master_faction.max_soldier_count += planet_node.soldier_limit
+				if factions_map.has(planet_data.master_id):
+					var master_faction: Faction = factions_map[planet_data.master_id]
+					planet_node.master_faction = master_faction
+					master_faction.max_soldier_count += planet_node.soldier_limit
+				else:
+					# can not find the faction in faction map, the enemy may not exist
+					planet_node.master_faction = $"Neutral"
 		
 		add_child(planet_node)
 		
