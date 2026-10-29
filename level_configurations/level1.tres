@@ -49,6 +49,7 @@ script = ExtResource("1_kbt5x")
 id = 3
 radius = 20.0
 position = Vector2(500, 500)
+planet_type = 1
 metadata/_custom_type_script = "uid://crmdjoc0fwvr8"
 
 [resource]

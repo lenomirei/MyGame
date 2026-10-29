@@ -50,3 +50,8 @@ func _fly_to(target: Planet):
 	moving = true
 	target_planet = target
 	pass
+
+func _flash_to(target: Planet):
+	# flash to target planet
+	position = target.position
+	target._receive_soldiers(self)
