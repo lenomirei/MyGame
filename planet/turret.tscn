@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://ia53xjk3vgu5"]
+
+[ext_resource type="PackedScene" uid="uid://bg7idkmhpvf85" path="res://planet/planet.tscn" id="1_a1q2u"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o2drr"]
+resource_local_to_scene = true
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_a1q2u"]
+radius = 150.0
+
+[node name="Planet" unique_id=2022963055 instance=ExtResource("1_a1q2u")]
+type = 2
+
+[node name="CollisionShape2D" parent="." index="0" unique_id=201935307]
+shape = SubResource("CircleShape2D_o2drr")
+
+[node name="AttackArea" type="Area2D" parent="." index="7" unique_id=1813799606]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" index="0" unique_id=1627789405]
+shape = SubResource("CircleShape2D_a1q2u")

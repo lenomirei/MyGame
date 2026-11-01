@@ -1,4 +1,4 @@
-extends "res://planet.gd"
+extends "res://planet/planet.gd"
 
 func _ready() -> void:
 	type = PlanetType.PORTAL
