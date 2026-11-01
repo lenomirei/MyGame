@@ -91,15 +91,15 @@ func _move_soldiers_to_target(target: Planet) -> void:
 	pass
 
 # add a parameter to indicate which faction's soldiers to fly
+# only player soilders can be moved to other planets, so we only fly player soldiers
 func _fly_soldiers(target: Planet):
-	for soldier in $"Soldiers".get_children():
-			soldier = soldier as Soldier
-			soldiers_map[soldier.master_faction].soldiers.erase(soldier)
-			soldier.reparent(get_parent(), true)
-			soldier._fly_to(target)
-			_update_soldiers_information()
-			#target._handle_attack_soldier(soldier, self)
-			pass
+	while !soldiers_map[GlobalData.player_faction].soldiers.is_empty():
+		var soldier: Soldier = soldiers_map[GlobalData.player_faction].soldiers.pop_front();
+		soldier.reparent(get_parent(), true)
+		soldier._fly_to(target)
+		_update_soldiers_information()
+		#target._handle_attack_soldier(soldier, self)
+		pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
