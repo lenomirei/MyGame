@@ -4,7 +4,9 @@ class_name Planet
 
 enum PlanetType {
 	PLANET,
-	PORTAL
+	PORTAL,
+	TURRET,
+	MOTHERSHIP
 }
 
 signal connecting_enter()

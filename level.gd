@@ -54,8 +54,8 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 	if null == planets_data:
 		return false
 	
-	var planet_scene: PackedScene = load("res://planet.tscn")
-	var portal_script: Script = load("res://portal.gd")
+	var planet_scene: PackedScene = load("res://planet/planet.tscn")
+	var portal_script: Script = load("res://planet/portal.gd")
 	for planet_data: PlanetInfo in planets_data:
 		var planet_node: Planet = planet_scene.instantiate()
 		planet_node.name = "Planet" + String.num(planet_data.id)

@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://bg7idkmhpvf85"]
 
-[ext_resource type="Script" uid="uid://d1761esfkfhsh" path="res://planet.gd" id="1_1yy88"]
+[ext_resource type="Script" uid="uid://c3dk61ysqpmkx" path="res://planet/planet.gd" id="1_1dy84"]
 [ext_resource type="Script" uid="uid://dbm3lny1m45xl" path="res://capture_progress.gd" id="2_mtr83"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qaopu"]
 resource_local_to_scene = true
 
 [node name="Planet" type="Area2D" unique_id=2022963055]
-script = ExtResource("1_1yy88")
+script = ExtResource("1_1dy84")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=201935307]
 shape = SubResource("CircleShape2D_qaopu")
