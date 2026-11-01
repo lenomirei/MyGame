@@ -85,21 +85,24 @@ func _receive_soldiers(soldier: Soldier) -> void:
 	soldier.reparent(self.get_node(^"Soldiers"), true)
 	_update_soldiers_information()
 
-func _move_soldiers_to_target(target: Planet) -> void:
+func _move_soldiers_to_target(operator: Faction, target: Planet) -> void:
 	if target != null:
-		_fly_soldiers(target)
+		_fly_soldiers(operator, target)
 	pass
 
 # add a parameter to indicate which faction's soldiers to fly
 # only player soilders can be moved to other planets, so we only fly player soldiers
-func _fly_soldiers(target: Planet):
-	while !soldiers_map[GlobalData.player_faction].soldiers.is_empty():
-		var soldier: Soldier = soldiers_map[GlobalData.player_faction].soldiers.pop_front();
+func _fly_soldiers(operator: Faction, target: Planet):
+	if !soldiers_map.has(operator):
+		print("no soldiers_map of this faction on this planet")
+		return
+	
+	while !soldiers_map[operator].soldiers.is_empty():
+		var soldier: Soldier = soldiers_map[operator].soldiers.pop_front();
 		soldier.reparent(get_parent(), true)
 		soldier._fly_to(target)
 		_update_soldiers_information()
 		#target._handle_attack_soldier(soldier, self)
-		pass
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -233,7 +236,7 @@ func _input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> void
 				GlobalData.connecting_info.from.connecting_exit.emit()
 				GlobalData.connecting_info.to = self
 				if GlobalData.connecting_info.from != self:
-					GlobalData.connecting_info.from._move_soldiers_to_target(GlobalData.connecting_info.to)
+					GlobalData.connecting_info.from._move_soldiers_to_target(GlobalData.player_faction, GlobalData.connecting_info.to)
 				GlobalData.connecting_info.clear()
 		
 			
