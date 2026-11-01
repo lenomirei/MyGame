@@ -103,8 +103,8 @@ func _fly_soldiers(target: Planet):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if connecting and master_faction.state == Faction.State.PLAYER:
-		queue_redraw()
+	if connecting:
+		queue_redraw() # this for redraw the connecting line when mouse move
 
 	# _battle(delta)
 	if soldiers_map.size() == 1 and soldiers_map.keys()[0] != master_faction:
@@ -199,9 +199,10 @@ func _on_battle_tick():
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, master_faction.color)
 	
-	if connecting and master_faction.state == Faction.State.PLAYER:
+	if connecting:
 		var mouse_position: Vector2 = get_local_mouse_position()
-		draw_line(Vector2.ZERO, mouse_position, master_faction.color, 5.0, true)
+		# connecting line always player color
+		draw_line(Vector2.ZERO, mouse_position, GlobalData.player_faction.color, 5.0, true)
 
 func start_spawn() -> void:
 	if master_faction.state != Faction.State.NEUTRAL:
