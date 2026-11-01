@@ -6,7 +6,8 @@ class_name Level
 var factions_map: Dictionary[int, Faction]
 
 func _ready() -> void:
-	pass
+	GlobalData.connecting_info.connecting_started.connect(_on_connecting_started)
+	GlobalData.connecting_info.connecting_ended.connect(_on_connecting_ended)
 
 func _generate_level(config_path: String) -> bool:
 	var level1_configuration: LevelConfiguration = load("res://level_configurations/level1.tres")
@@ -88,7 +89,8 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	if GlobalData.connecting_info.from != null:
+		queue_redraw()
 	
 func _player_win():
 	# todo: pause the game and emit play win signal to game manager
@@ -97,3 +99,14 @@ func _player_win():
 func _player_lose():
 	# todo: pause the game and emit play lose signal to game manager
 	pass
+
+func _draw() -> void:
+	if GlobalData.connecting_info.from != null:
+		var mouse_position: Vector2 = get_local_mouse_position()
+		draw_line(GlobalData.connecting_info.from.position, mouse_position, GlobalData.player_faction.color, 5.0, true)
+
+func _on_connecting_started(from: Planet, to: Planet) -> void:
+	queue_redraw()
+
+func _on_connecting_ended(from: Planet, to: Planet) -> void:
+	queue_redraw()

@@ -29,7 +29,7 @@ class PlanetFactionSoldierInfo:
 
 var soldier_class: PackedScene
 var mouse_enter: bool = false
-var connecting: bool = false
+var connecting: bool = false # for drawing connecting circle to hint the player that this planet is connecting
 var id: int
 # soldiers on this planet, grouped by faction, PlanetFactionSoldierInfo soldiers may be empty if all soldiers of that faction are dead, but the faction is still present on this planet
 var soldiers_map: Dictionary[Faction, PlanetFactionSoldierInfo] 
@@ -103,9 +103,6 @@ func _fly_soldiers(target: Planet):
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	if connecting:
-		queue_redraw() # this for redraw the connecting line when mouse move
-
 	# _battle(delta)
 	if soldiers_map.size() == 1 and soldiers_map.keys()[0] != master_faction:
 		if not battle_timer.is_stopped():
@@ -198,11 +195,6 @@ func _on_battle_tick():
 
 func _draw() -> void:
 	draw_circle(Vector2.ZERO, radius, master_faction.color)
-	
-	if connecting:
-		var mouse_position: Vector2 = get_local_mouse_position()
-		# connecting line always player color
-		draw_line(Vector2.ZERO, mouse_position, GlobalData.player_faction.color, 5.0, true)
 
 func start_spawn() -> void:
 	if master_faction.state != Faction.State.NEUTRAL:
@@ -231,18 +223,18 @@ func _input_event(viewport: Viewport, event: InputEvent, shape_idx: int) -> void
 	if event is InputEventMouseButton:
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 		if mouse_event.is_pressed():
-			if GlobalData.drag_info.from == null:
+			if GlobalData.connecting_info.from == null:
 				if soldiers_map.has(GlobalData.player_faction) && soldiers_map[GlobalData.player_faction].soldiers.size() > 0:
 					connecting = true
-					GlobalData.drag_info.from = self
+					GlobalData.connecting_info.from = self
 					connecting_enter.emit()
 			else:
-				GlobalData.drag_info.from.connecting = false;
-				GlobalData.drag_info.from.connecting_exit.emit()
-				GlobalData.drag_info.to = self
-				if GlobalData.drag_info.from != self:
-					GlobalData.drag_info.from._move_soldiers_to_target(GlobalData.drag_info.to)
-				GlobalData.drag_info.clear()
+				GlobalData.connecting_info.from.connecting = false;
+				GlobalData.connecting_info.from.connecting_exit.emit()
+				GlobalData.connecting_info.to = self
+				if GlobalData.connecting_info.from != self:
+					GlobalData.connecting_info.from._move_soldiers_to_target(GlobalData.connecting_info.to)
+				GlobalData.connecting_info.clear()
 		
 			
 func _start_capture(faction: Faction) -> void:
