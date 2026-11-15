@@ -283,3 +283,18 @@ func _on_capture_progress_progress_max(faction: Faction) -> void:
 func _remove_loser_faction(loser: Faction) -> void:
 	$"SoldiersBox".remove_child(soldiers_map[loser].soldier_count_label)
 	soldiers_map.erase(loser)
+
+func _on_body_entered(body: Node2D) -> void:
+	if body is not Soldier:
+		return;
+	
+	var soldier: Soldier = body as Soldier
+	if soldier.state != Soldier.SoldierState.MOVING:
+		return
+		
+	if soldier.target_planet != self:
+		return
+	
+	soldier._stand_by()
+	call_deferred("_receive_soldiers", soldier)
+	

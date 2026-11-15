@@ -52,5 +52,6 @@ offset_bottom = 78.0
 script = ExtResource("2_mtr83")
 metadata/_custom_type_script = "uid://dbm3lny1m45xl"
 
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="SpwanTimer" to="." method="_on_spawn_timer_timeout"]
 [connection signal="progress_max" from="CaptureProgress" to="." method="_on_capture_progress_progress_max"]
