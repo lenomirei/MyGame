@@ -4,6 +4,7 @@ class_name Level
 # Called when the node enters the scene tree for the first time.
 
 var factions_map: Dictionary[int, Faction]
+var level_soldiers_limit: int = 0
 
 func _ready() -> void:
 	GlobalData.connecting_info.connecting_started.connect(_on_connecting_started)
@@ -62,6 +63,7 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 		if planet_data.planet_type == Planet.PlanetType.PORTAL:
 			planet_node.set_script(portal_script)
 		planet_node.soldier_limit = planet_data.max_soldiers
+		level_soldiers_limit += planet_data.max_soldiers
 		planet_node.radius = planet_data.radius
 		planet_node.id = planet_data.id
 		planet_node.position = Vector2(planet_data.position.x, planet_data.position.y)
@@ -83,7 +85,8 @@ func _parse_level_data(level_configuration: LevelConfiguration) -> bool:
 					planet_node.master_faction = $"Neutral"
 		
 		add_child(planet_node)
-		
+	
+	print("Level max soldiers limit: %d" % level_soldiers_limit)
 		
 	return true
 
