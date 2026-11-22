@@ -29,7 +29,6 @@ class PlanetFactionSoldierInfo:
 @export var battle_speed: float = 1.0  # 每秒损耗系数（越大打得越快）
 @export var type: PlanetType = PlanetType.PLANET
 
-var soldier_class: PackedScene
 var mouse_enter: bool = false
 var connecting: bool = false # for drawing connecting circle to hint the player that this planet is connecting
 var id: int
@@ -41,7 +40,6 @@ var battle_timer: Timer
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	capture_progress = $"CaptureProgress"
-	soldier_class = load("res://soldier.tscn") as PackedScene
 	var label: Label = $"Label"
 	label.position.y = -radius - label.size.y - 10
 	var soldiers_box: HBoxContainer = $"SoldiersBox"
@@ -71,7 +69,7 @@ func get_planet_under_mouse() -> Planet:
 
 func _receive_soldiers(soldier: Soldier) -> void:
 	if not soldiers_map.has(soldier.master_faction):
-		print("add new faction")
+		print_debug("add new faction")
 		# soldiers from new faction
 		soldiers_map[soldier.master_faction] = PlanetFactionSoldierInfo.new()
 		var faction_info: PlanetFactionSoldierInfo = PlanetFactionSoldierInfo.new()
@@ -149,7 +147,7 @@ func _on_battle_tick():
 		for i in loop_times:
 			var dead: Soldier = info.soldiers.pop_back()
 			$"Soldiers".remove_child(dead)
-			dead.queue_free()
+			SoldiersPool.get_instance()._release_soldier(dead)
 	
 	for faction: Faction in to_erase:
 		_remove_loser_faction(faction)
@@ -210,7 +208,7 @@ func start_spawn() -> void:
 
 func _on_spawn_timer_timeout() -> void:
 	if master_faction._can_produce_soldier():
-		var soldier: Soldier = soldier_class.instantiate() as Soldier
+		var soldier: Soldier = SoldiersPool.get_instance()._get_soldier()
 		soldier.initialize(self, master_faction)
 		if not soldiers_map.has(master_faction):
 			var faction_info: PlanetFactionSoldierInfo = PlanetFactionSoldierInfo.new()
